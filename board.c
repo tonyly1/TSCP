@@ -641,7 +641,6 @@ void takeback()
 		color[(int)m.to] = EMPTY;
 		piece[(int)m.to] = EMPTY;
 #ifdef BOARD
-		pospiece[board[(int)m.to]] = PIECE_DEAD;
 		board[(int)m.to] = 0;
 		assert(checkBoard());
 #endif
