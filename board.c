@@ -357,43 +357,51 @@ void gen()
 void gen_caps()
 {
 	int i, j, n;
+	int index_piece;
 
 	first_move[ply + 1] = first_move[ply];
-	for (i = 0; i < 64; ++i)
-		if (color[i] == side) {
-			if (piece[i] == PAWN) {
-				if (side == LIGHT) {
-					if (COL(i) != 0 && color[i - 9] == DARK)
-						gen_push(i, i - 9, 17);
-					if (COL(i) != 7 && color[i - 7] == DARK)
-						gen_push(i, i - 7, 17);
-					if (i <= 15 && color[i - 8] == EMPTY)
-						gen_push(i, i - 8, 16);
-				}
-				if (side == DARK) {
-					if (COL(i) != 0 && color[i + 7] == LIGHT)
-						gen_push(i, i + 7, 17);
-					if (COL(i) != 7 && color[i + 9] == LIGHT)
-						gen_push(i, i + 9, 17);
-					if (i >= 48 && color[i + 8] == EMPTY)
-						gen_push(i, i + 8, 16);
-				}
+	for (index_piece = 1; index_piece < 17; ++index_piece)
+	{
+		if (side == LIGHT)
+			i = pospiece[index_piece];
+		else
+			i = pospiece[index_piece + 16];
+
+		if (i == PIECE_DEAD)
+			continue;
+		if (piece[i] == PAWN) {
+			if (side == LIGHT) {
+				if (COL(i) != 0 && color[i - 9] == DARK)
+					gen_push(i, i - 9, 17);
+				if (COL(i) != 7 && color[i - 7] == DARK)
+					gen_push(i, i - 7, 17);
+				if (i <= 15 && color[i - 8] == EMPTY)
+					gen_push(i, i - 8, 16);
 			}
-			else
-				for (j = 0; j < offsets[piece[i]]; ++j)
-					for (n = i;;) {
-						n = mailbox[mailbox64[n] + offset[piece[i]][j]];
-						if (n == -1)
-							break;
-						if (color[n] != EMPTY) {
-							if (color[n] == xside)
-								gen_push(i, n, 1);
-							break;
-						}
-						if (!slide[piece[i]])
-							break;
-					}
+			if (side == DARK) {
+				if (COL(i) != 0 && color[i + 7] == LIGHT)
+					gen_push(i, i + 7, 17);
+				if (COL(i) != 7 && color[i + 9] == LIGHT)
+					gen_push(i, i + 9, 17);
+				if (i >= 48 && color[i + 8] == EMPTY)
+					gen_push(i, i + 8, 16);
+			}
 		}
+		else
+			for (j = 0; j < offsets[piece[i]]; ++j)
+				for (n = i;;) {
+					n = mailbox[mailbox64[n] + offset[piece[i]][j]];
+					if (n == -1)
+						break;
+					if (color[n] != EMPTY) {
+						if (color[n] == xside)
+							gen_push(i, n, 1);
+						break;
+					}
+					if (!slide[piece[i]])
+						break;
+				}
+	}
 	if (ep != -1) {
 		if (side == LIGHT) {
 			if (COL(ep) != 0 && color[ep + 7] == LIGHT && piece[ep + 7] == PAWN)

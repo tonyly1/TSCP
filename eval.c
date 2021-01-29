@@ -115,6 +115,7 @@ int eval()
 	int i;
 	int f;  /* file */
 	int score[2];  /* each side's score */
+	int index_piece;
 
 	/* this is the first pass: set up pawn_rank, piece_mat, and pawn_mat. */
 	for (i = 0; i < 10; ++i) {
@@ -125,7 +126,12 @@ int eval()
 	piece_mat[DARK] = 0;
 	pawn_mat[LIGHT] = 0;
 	pawn_mat[DARK] = 0;
-	for (i = 0; i < 64; ++i) {
+	for (index_piece = 1; index_piece < 17; ++index_piece) {
+		if (side == LIGHT)
+			i = pospiece[index_piece];
+		else
+			i = pospiece[index_piece + 16];
+
 		if (color[i] == EMPTY)
 			continue;
 		if (piece[i] == PAWN) {
@@ -147,65 +153,70 @@ int eval()
 	/* this is the second pass: evaluate each piece */
 	score[LIGHT] = piece_mat[LIGHT] + pawn_mat[LIGHT];
 	score[DARK] = piece_mat[DARK] + pawn_mat[DARK];
-	for (i = 0; i < 64; ++i) {
+	for (index_piece = 1; index_piece < 17; ++index_piece) {
+		if (side == LIGHT)
+			i = pospiece[index_piece];
+		else
+			i = pospiece[index_piece + 16];
+
 		if (color[i] == EMPTY)
 			continue;
 		if (color[i] == LIGHT) {
 			switch (piece[i]) {
-				case PAWN:
-					score[LIGHT] += eval_light_pawn(i);
-					break;
-				case KNIGHT:
-					score[LIGHT] += knight_pcsq[i];
-					break;
-				case BISHOP:
-					score[LIGHT] += bishop_pcsq[i];
-					break;
-				case ROOK:
-					if (pawn_rank[LIGHT][COL(i) + 1] == 0) {
-						if (pawn_rank[DARK][COL(i) + 1] == 7)
-							score[LIGHT] += ROOK_OPEN_FILE_BONUS;
-						else
-							score[LIGHT] += ROOK_SEMI_OPEN_FILE_BONUS;
-					}
-					if (ROW(i) == 1)
-						score[LIGHT] += ROOK_ON_SEVENTH_BONUS;
-					break;
-				case KING:
-					if (piece_mat[DARK] <= 1200)
-						score[LIGHT] += king_endgame_pcsq[i];
+			case PAWN:
+				score[LIGHT] += eval_light_pawn(i);
+				break;
+			case KNIGHT:
+				score[LIGHT] += knight_pcsq[i];
+				break;
+			case BISHOP:
+				score[LIGHT] += bishop_pcsq[i];
+				break;
+			case ROOK:
+				if (pawn_rank[LIGHT][COL(i) + 1] == 0) {
+					if (pawn_rank[DARK][COL(i) + 1] == 7)
+						score[LIGHT] += ROOK_OPEN_FILE_BONUS;
 					else
-						score[LIGHT] += eval_light_king(i);
-					break;
+						score[LIGHT] += ROOK_SEMI_OPEN_FILE_BONUS;
+				}
+				if (ROW(i) == 1)
+					score[LIGHT] += ROOK_ON_SEVENTH_BONUS;
+				break;
+			case KING:
+				if (piece_mat[DARK] <= 1200)
+					score[LIGHT] += king_endgame_pcsq[i];
+				else
+					score[LIGHT] += eval_light_king(i);
+				break;
 			}
 		}
 		else {
 			switch (piece[i]) {
-				case PAWN:
-					score[DARK] += eval_dark_pawn(i);
-					break;
-				case KNIGHT:
-					score[DARK] += knight_pcsq[flip[i]];
-					break;
-				case BISHOP:
-					score[DARK] += bishop_pcsq[flip[i]];
-					break;
-				case ROOK:
-					if (pawn_rank[DARK][COL(i) + 1] == 7) {
-						if (pawn_rank[LIGHT][COL(i) + 1] == 0)
-							score[DARK] += ROOK_OPEN_FILE_BONUS;
-						else
-							score[DARK] += ROOK_SEMI_OPEN_FILE_BONUS;
-					}
-					if (ROW(i) == 6)
-						score[DARK] += ROOK_ON_SEVENTH_BONUS;
-					break;
-				case KING:
-					if (piece_mat[LIGHT] <= 1200)
-						score[DARK] += king_endgame_pcsq[flip[i]];
+			case PAWN:
+				score[DARK] += eval_dark_pawn(i);
+				break;
+			case KNIGHT:
+				score[DARK] += knight_pcsq[flip[i]];
+				break;
+			case BISHOP:
+				score[DARK] += bishop_pcsq[flip[i]];
+				break;
+			case ROOK:
+				if (pawn_rank[DARK][COL(i) + 1] == 7) {
+					if (pawn_rank[LIGHT][COL(i) + 1] == 0)
+						score[DARK] += ROOK_OPEN_FILE_BONUS;
 					else
-						score[DARK] += eval_dark_king(i);
-					break;
+						score[DARK] += ROOK_SEMI_OPEN_FILE_BONUS;
+				}
+				if (ROW(i) == 6)
+					score[DARK] += ROOK_ON_SEVENTH_BONUS;
+				break;
+			case KING:
+				if (piece_mat[LIGHT] <= 1200)
+					score[DARK] += king_endgame_pcsq[flip[i]];
+				else
+					score[DARK] += eval_dark_king(i);
+				break;
 			}
 		}
 	}
