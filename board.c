@@ -47,20 +47,20 @@ void init_board()
  *	 0,  0,  0,  0,  0,  0,  0,  0,
  *	 0,  0,  0,  0,  0,  0,  0,  0,
  *	 0,  0,  0,  0,  0,  0,  0,  0,
- *	 9, 10, 11, 12, 13, 14, 15, 16,
- *	 2,  3,  4,  5,  1,  6,  7,  8
+ *	 2,  3,  4,  5,  6,  7,  8,  9,
+ *	10, 11, 12, 13, 14, 15, 16, 17
  *
  *  1       = white king
  *  17      = black king
- *  2, 8    = white rook  
+ *  10, 17  = white rook  
  *  18, 24  = black rook
- *  3, 7    = white knight
+ *  11, 16  = white knight
  *  19, 23  = black knight
- *  4, 6    = white bishop
+ *  12, 15  = white bishop
  *  20, 22  = black bishop
- *  5       = white queen
+ *  13      = white queen
  *  21      = black queen
- *  9 - 16  = white pawn
+ *  2 - 9   = white pawn
  *  25 - 32 = black pawn
  */
 
@@ -641,7 +641,6 @@ void takeback()
 		color[(int)m.to] = EMPTY;
 		piece[(int)m.to] = EMPTY;
 #ifdef BOARD
-		pospiece[board[(int)m.to]] = PIECE_DEAD;
 		board[(int)m.to] = 0;
 		assert(checkBoard());
 #endif
