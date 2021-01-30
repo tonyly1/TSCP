@@ -9,6 +9,7 @@
 /* prototypes */
 
 /* board.c */
+void initAttackTables();
 void init_board();
 void init_hash();
 int hash_rand();
