@@ -11,6 +11,7 @@
 #define PIECE_DEAD (-1)
 extern int pospiece[33];
 extern int board[64];
+extern int canAttack[5][64][64];
 extern int color[64];
 extern int piece[64];
 extern int side;

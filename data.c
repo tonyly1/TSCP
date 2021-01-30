@@ -11,6 +11,7 @@
 
 /* the board representation */
 #define PIECE_DEAD (-1)
+int canAttack[5][64][64];
 int pospiece[33];
 int board[64];
 int color[64];  /* LIGHT, DARK, or EMPTY */

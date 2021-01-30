@@ -32,10 +32,10 @@ void init_board()
 	hply = 0;
 	set_hash();  /* init_hash() must be called before this function */
 	first_move[0] = 0;
-	#ifdef BOARD
+#ifdef BOARD
 		syncBoard();
 		assert(checkBoard());
-	#endif 
+#endif 
 
 }
 
@@ -129,6 +129,32 @@ BOOL checkBoard()
 	}
 
 	return TRUE;
+}
+
+void initAttackTables()
+{
+	memset(canAttack,0,sizeof(canAttack));
+
+	int i, j, n;
+	int index_piece;
+	for (index_piece = 1; index_piece < 6; ++index_piece)
+		for (i = 0; i < 64; ++i)
+			for (j = 0; j < offsets[index_piece]; ++j)
+				for (n = i;;) {
+					n = mailbox[mailbox64[n] + offset[index_piece][j]];
+					if (n == -1) {
+						break;
+					}
+					if (color[n] != EMPTY) {
+						if (color[n] == xside)
+							canAttack[index_piece][i][n] = 1;
+						break;
+					}
+					canAttack[index_piece][i][n] = 1;
+					if (!slide[index_piece])
+						break;
+				}
+		
 }
 
 /* init_hash() initializes the random numbers used by set_hash(). */
@@ -235,18 +261,19 @@ BOOL attack(int sq, int s)
 				}
 			}
 			else
-				for (j = 0; j < offsets[piece[i]]; ++j)
-					for (n = i;;) {
-						n = mailbox[mailbox64[n] + offset[piece[i]][j]];
-						if (n == -1)
-							break;
-						if (n == sq)
-							return TRUE;
-						if (color[n] != EMPTY)
-							break;
-						if (!slide[piece[i]])
-							break;
-					}
+				if (canAttack[piece[i]][i][sq])
+					for (j = 0; j < offsets[piece[i]]; ++j)
+						for (n = i;;) {
+							n = mailbox[mailbox64[n] + offset[piece[i]][j]];
+							if (n == -1)
+								break;
+							if (n == sq)
+								return TRUE;
+							if (color[n] != EMPTY)
+								break;
+							if (!slide[piece[i]])
+								break;
+						}
 		}
 	}
 	return FALSE;
