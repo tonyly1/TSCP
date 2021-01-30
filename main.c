@@ -50,6 +50,7 @@ int main()
 	printf("\n");
 	init_hash();
 	init_board();
+	initAttackTables();
 	open_book();
 	gen();
 	computer_side = EMPTY;
@@ -306,6 +307,8 @@ void print_position()
 			board[pospiece[i]], pospiece[i], board[pospiece[i + 16]], pospiece[i + 16]);
 	}
 }
+
+void displayAttackTables()
 
 
 /* xboard() is a substitute for main() that is XBoard
