@@ -126,11 +126,11 @@ int eval()
 	piece_mat[DARK] = 0;
 	pawn_mat[LIGHT] = 0;
 	pawn_mat[DARK] = 0;
-	for (index_piece = 1; index_piece < 17; ++index_piece) {
-		if (side == LIGHT)
-			i = pospiece[index_piece];
-		else
-			i = pospiece[index_piece + 16];
+	for (index_piece = 1; index_piece < 33; ++index_piece) {
+		i = pospiece[index_piece];
+
+		if (i == PIECE_DEAD)
+			continue;
 
 		if (color[i] == EMPTY)
 			continue;
@@ -153,11 +153,11 @@ int eval()
 	/* this is the second pass: evaluate each piece */
 	score[LIGHT] = piece_mat[LIGHT] + pawn_mat[LIGHT];
 	score[DARK] = piece_mat[DARK] + pawn_mat[DARK];
-	for (index_piece = 1; index_piece < 17; ++index_piece) {
-		if (side == LIGHT)
-			i = pospiece[index_piece];
-		else
-			i = pospiece[index_piece + 16];
+	for (index_piece = 1; index_piece < 33; ++index_piece) {
+		i = pospiece[index_piece];
+
+		if (i == PIECE_DEAD)
+			continue;
 
 		if (color[i] == EMPTY)
 			continue;
