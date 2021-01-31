@@ -12,7 +12,6 @@
 #include "data.h"
 #include "protos.h"
 
-
 /* init_board() sets the board to the initial game state. */
 
 void init_board()
@@ -127,11 +126,10 @@ BOOL checkBoard()
 				return FALSE;
 		}
 	}
-	if (pospiece[1] == PIECE_DEAD || pospiece[17] == PIECE_DEAD)
-		return FALSE;
 
 	return TRUE;
 }
+
 
 void initAttackTables()
 {
@@ -145,9 +143,29 @@ void initAttackTables()
 			for (j = 0; j < offsets[index_piece]; ++j)
 				for (n = i;;) {
 					n = mailbox[mailbox64[n] + offset[index_piece][j]];
-					if (n == -1) 
+					if (n == -1)
 						break;
 					canAttack[index_piece][i][n] = 1;
+					if (!slide[index_piece])
+						break;
+				}
+		}
+}
+
+void initBitboardAttack()
+{
+	memset(bitboardCanAttack, 0, sizeof(bitboardCanAttack));
+	int i, j, n;
+	int index_piece;
+	for (index_piece = 1; index_piece < 6; ++index_piece)
+		for (i = 0; i < 64; ++i) {
+			bitboardCanAttack[index_piece][i] |= (1ULL << i);
+			for (j = 0; j < offsets[index_piece]; ++j)
+				for (n = i;;) {
+					n = mailbox[mailbox64[n] + offset[index_piece][j]];
+					if (n == -1)
+						break;
+					bitboardCanAttack[index_piece][i] |= (1ULL << n);
 					if (!slide[index_piece])
 						break;
 				}
@@ -258,7 +276,7 @@ BOOL attack(int sq, int s)
 				}
 			}
 			else
-				if (canAttack[piece[i]][i][sq])
+				if (bitboardCanAttack[piece[i]][sq])
 					for (j = 0; j < offsets[piece[i]]; ++j)
 						for (n = i;;) {
 							n = mailbox[mailbox64[n] + offset[piece[i]][j]];
@@ -300,6 +318,7 @@ void gen()
 
 		if (i == PIECE_DEAD)
 			continue;
+
 		if (color[i] == side) 
 			if (piece[i] == PAWN) {
 				if (side == LIGHT) {
@@ -393,39 +412,43 @@ void gen_caps()
 
 		if (i == PIECE_DEAD)
 			continue;
-		if (piece[i] == PAWN) {
-			if (side == LIGHT) {
-				if (COL(i) != 0 && color[i - 9] == DARK)
-					gen_push(i, i - 9, 17);
-				if (COL(i) != 7 && color[i - 7] == DARK)
-					gen_push(i, i - 7, 17);
-				if (i <= 15 && color[i - 8] == EMPTY)
-					gen_push(i, i - 8, 16);
-			}
-			if (side == DARK) {
-				if (COL(i) != 0 && color[i + 7] == LIGHT)
-					gen_push(i, i + 7, 17);
-				if (COL(i) != 7 && color[i + 9] == LIGHT)
-					gen_push(i, i + 9, 17);
-				if (i >= 48 && color[i + 8] == EMPTY)
-					gen_push(i, i + 8, 16);
-			}
-		}
-		else
-			for (j = 0; j < offsets[piece[i]]; ++j)
-				for (n = i;;) {
-					n = mailbox[mailbox64[n] + offset[piece[i]][j]];
-					if (n == -1)
-						break;
-					if (color[n] != EMPTY) {
-						if (color[n] == xside)
-							gen_push(i, n, 1);
-						break;
-					}
-					if (!slide[piece[i]])
-						break;
+
+		if (color[i] == side) {
+			if (piece[i] == PAWN) {
+				if (side == LIGHT) {
+					if (COL(i) != 0 && color[i - 9] == DARK)
+						gen_push(i, i - 9, 17);
+					if (COL(i) != 7 && color[i - 7] == DARK)
+						gen_push(i, i - 7, 17);
+					if (i <= 15 && color[i - 8] == EMPTY)
+						gen_push(i, i - 8, 16);
 				}
+				if (side == DARK) {
+					if (COL(i) != 0 && color[i + 7] == LIGHT)
+						gen_push(i, i + 7, 17);
+					if (COL(i) != 7 && color[i + 9] == LIGHT)
+						gen_push(i, i + 9, 17);
+					if (i >= 48 && color[i + 8] == EMPTY)
+						gen_push(i, i + 8, 16);
+				}
+			}
+			else
+				for (j = 0; j < offsets[piece[i]]; ++j)
+					for (n = i;;) {
+						n = mailbox[mailbox64[n] + offset[piece[i]][j]];
+						if (n == -1)
+							break;
+						if (color[n] != EMPTY) {
+							if (color[n] == xside)
+								gen_push(i, n, 1);
+							break;
+						}
+						if (!slide[piece[i]])
+							break;
+					}
+		}
 	}
+
 	if (ep != -1) {
 		if (side == LIGHT) {
 			if (COL(ep) != 0 && color[ep + 7] == LIGHT && piece[ep + 7] == PAWN)
