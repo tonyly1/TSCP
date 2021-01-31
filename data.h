@@ -8,10 +8,10 @@
 
 /* this is basically a copy of data.c that's included by most
    of the source files so they can use the data.c variables */
-#define PIECE_DEAD (-1)
 extern int pospiece[33];
 extern int board[64];
-extern char canAttack[5][64][64];
+extern char canAttack[6][64][64];
+extern U64 bitboardCanAttack[6][64];
 extern int color[64];
 extern int piece[64];
 extern int side;

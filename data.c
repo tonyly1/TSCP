@@ -10,10 +10,10 @@
 
 
 /* the board representation */
-#define PIECE_DEAD (-1)
-char canAttack[5][64][64];
 int pospiece[33];
 int board[64];
+char canAttack[6][64][64];
+U64 bitboardCanAttack[6][64];
 int color[64];  /* LIGHT, DARK, or EMPTY */
 int piece[64];  /* PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING, or EMPTY */
 int side;  /* the side to move */
