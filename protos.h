@@ -5,11 +5,11 @@
  *	Copyright 1997 Tom Kerrigan
  */
 
-
 /* prototypes */
 
 /* board.c */
 void initAttackTables();
+void initBitboardAttack();
 void init_board();
 void init_hash();
 int hash_rand();
@@ -61,6 +61,7 @@ void print_board();
 void print_pos_board();
 void print_position();
 void displayAttackTables(int pieceType, int source);
+void printBitboardAttack(int pieceType, U64 bitboard);
 void xboard();
 void print_result();
 void bench();
