@@ -60,6 +60,7 @@ char *move_str(move_bytes m);
 void print_board();
 void print_pos_board();
 void print_position();
+void displayAttackTables(int pieceType, int source);
 void xboard();
 void print_result();
 void bench();
