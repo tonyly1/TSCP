@@ -280,6 +280,7 @@ BOOL attack(int sq, int s)
 			}
 			else
 				// on test si on peut attaquer grâce à la table prégénérer
+				//if (canAttack[piece[i]][i][sq])
 				if (bitboardCanAttack[piece[i]][sq])
 					for (j = 0; j < offsets[piece[i]]; ++j)
 						for (n = i;;) {
