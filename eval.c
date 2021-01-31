@@ -126,6 +126,7 @@ int eval()
 	piece_mat[DARK] = 0;
 	pawn_mat[LIGHT] = 0;
 	pawn_mat[DARK] = 0;
+	// la boucle s'effectue sur toutes les pièces
 	for (index_piece = 1; index_piece < 33; ++index_piece) {
 		i = pospiece[index_piece];
 

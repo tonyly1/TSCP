@@ -61,7 +61,7 @@ void print_board();
 void print_pos_board();
 void print_position();
 void displayAttackTables(int pieceType, int source);
-void printBitboardAttack(int pieceType, U64 bitboard);
+void printBitboardAttack(int pieceType, int source);
 void xboard();
 void print_result();
 void bench();

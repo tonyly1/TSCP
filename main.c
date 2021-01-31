@@ -49,7 +49,7 @@ int main()
 	printf("\n");
 	init_hash();
 	init_board();
-	//initAttackTables();
+	initAttackTables();
 	initBitboardAttack();
 	open_book();
 	gen();

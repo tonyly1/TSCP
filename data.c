@@ -10,10 +10,10 @@
 
 
 /* the board representation */
-int pospiece[33];
-int board[64];
-char canAttack[6][64][64];
-U64 bitboardCanAttack[6][64];
+int pospiece[33]; // position de chaque pièce dans board
+int board[64]; // va représenter notre board
+char canAttack[6][64][64]; // table prégénéré de chaque type de pièce en fonction de la source
+U64 bitboardCanAttack[6][64]; // table prégénéré en bitboard de chaque type de pièce en fonction de la source
 int color[64];  /* LIGHT, DARK, or EMPTY */
 int piece[64];  /* PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING, or EMPTY */
 int side;  /* the side to move */

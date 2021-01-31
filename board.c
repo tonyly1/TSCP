@@ -100,6 +100,7 @@ void syncBoard()
 		}
 }
 
+// fonction permettant de vérifier la cohérence entre l'échéquier TSCP et le notre
 BOOL checkBoard()
 {
 	for (int i = 0; i < 64; ++i)
@@ -130,7 +131,7 @@ BOOL checkBoard()
 	return TRUE;
 }
 
-
+// fonction permettant de prégénérer les attaques de chaque pièce sauf les pions
 void initAttackTables()
 {
 	memset(canAttack,0,sizeof(canAttack));
@@ -152,9 +153,10 @@ void initAttackTables()
 		}
 }
 
+// fonction permettant de prégénérer les attaques de chaque pièce sauf les pions en bitboard
 void initBitboardAttack()
 {
-	memset(bitboardCanAttack, 0, sizeof(bitboardCanAttack));
+	memset(bitboardCanAttack, 0ULL, sizeof(bitboardCanAttack));
 	int i, j, n;
 	int index_piece;
 	for (index_piece = 1; index_piece < 6; ++index_piece)
@@ -237,6 +239,7 @@ void set_hash()
 
 BOOL in_check(int s)
 {
+	// On connaît la position de chaque roi, plus besoin d'effectuer une boucle
 	if (s == LIGHT)
 		return attack(pospiece[1], DARK);
 	else
@@ -276,6 +279,7 @@ BOOL attack(int sq, int s)
 				}
 			}
 			else
+				// on test si on peut attaquer grâce à la table prégénérer
 				if (bitboardCanAttack[piece[i]][sq])
 					for (j = 0; j < offsets[piece[i]]; ++j)
 						for (n = i;;) {
