@@ -127,6 +127,8 @@ BOOL checkBoard()
 				return FALSE;
 		}
 	}
+	if (pospiece[1] == PIECE_DEAD || pospiece[17] == PIECE_DEAD)
+		return FALSE;
 
 	return TRUE;
 }
@@ -138,23 +140,18 @@ void initAttackTables()
 	int i, j, n;
 	int index_piece;
 	for (index_piece = 1; index_piece < 6; ++index_piece)
-		for (i = 0; i < 64; ++i)
+		for (i = 0; i < 64; ++i) {
+			canAttack[index_piece][i][i] = 1;
 			for (j = 0; j < offsets[index_piece]; ++j)
 				for (n = i;;) {
 					n = mailbox[mailbox64[n] + offset[index_piece][j]];
-					if (n == -1) {
+					if (n == -1) 
 						break;
-					}
-					if (color[n] != EMPTY) {
-						if (color[n] == xside)
-							canAttack[index_piece][i][n] = 1;
-						break;
-					}
 					canAttack[index_piece][i][n] = 1;
 					if (!slide[index_piece])
 						break;
 				}
-		
+		}
 }
 
 /* init_hash() initializes the random numbers used by set_hash(). */
@@ -684,8 +681,6 @@ void takeback()
 		color[(int)m.to] = xside;
 		piece[(int)m.to] = hist_dat[hply].capture;
 #ifdef BOARD
-		if (board[(int)m.from])
-			pospiece[(int)board[m.from]] = PIECE_DEAD;
 		board[(int)m.to] = hist_dat[hply].capturePiece;
 		pospiece[board[(int)m.to]] = (int)m.to;
 		assert(checkBoard());

@@ -124,6 +124,13 @@ int main()
 			print_position();
 			continue;
 		}
+		int _type, _source;
+		if (!strcmp(s, "att")) {
+			scanf("%d", &_type);
+			scanf("%d", &_source);
+			displayAttackTables(_type, _source);
+			continue;
+		}
 		if (!strcmp(s, "bench")) {
 			computer_side = EMPTY;
 			bench();
@@ -147,6 +154,7 @@ int main()
 			printf("d - display the board\n");
 			printf("show - display the board position\n");
 			printf("pos - display the piece position\n");
+			printf("att(type, source) - display attack");
 			printf("bench - run the built-in benchmark\n");
 			printf("bye - exit the program\n");
 			printf("xboard - switch to XBoard mode\n");
@@ -308,7 +316,19 @@ void print_position()
 	}
 }
 
-void displayAttackTables()
+void displayAttackTables(int pieceType, int source)
+{
+	int i, index_piece;
+
+	printf("\n8 ");
+	for (i = 0; i < 64; ++i)
+	{
+		printf("  %d", canAttack[pieceType][source][i]);
+		if ((i + 1) % 8 == 0 && i != 63)
+			printf("\n%d ", 7 - ROW(i));
+	}
+	printf("\n\n    a  b  c  d  e  f  g  h\n\n");
+}
 
 
 /* xboard() is a substitute for main() that is XBoard
@@ -532,7 +552,7 @@ void bench()
 	set_hash();
 	print_board();
 	max_time = 1 << 25;
-	max_depth = 5;
+	max_depth = 7;
 	for (i = 0; i < 3; ++i) {
 		think(1);
 		t[i] = get_ms() - start_time;
