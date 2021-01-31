@@ -47,6 +47,8 @@
 #define ROW(x)			(x >> 3)
 #define COL(x)			(x & 7)
 
+#define PIECE_DEAD (-1) //permet d'indiquer une pièce morte 
+#define U64 unsigned long long //exercice bonus
 
 /* This is the basic description of a move. promote is what
    piece to promote the pawn to, if the move is a pawn
