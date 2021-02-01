@@ -281,7 +281,7 @@ BOOL attack(int sq, int s)
 			else
 				// on test si on peut attaquer grâce à la table prégénérer
 				//if (canAttack[piece[i]][i][sq])
-				if (bitboardCanAttack[piece[i]][sq])
+				if (bitboardCanAttack[piece[i]][sq] & (1ULL << i))
 					for (j = 0; j < offsets[piece[i]]; ++j)
 						for (n = i;;) {
 							n = mailbox[mailbox64[n] + offset[piece[i]][j]];
