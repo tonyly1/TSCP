@@ -1,0 +1,13 @@
+﻿  board.c
+  book.c
+D:\Travails\IA\TSCP_TD2\Code\book.c(28,18): warning C4244: 'fonction' : conversion de 'time_t' en 'unsigned int', perte possible de données
+  data.c
+  eval.c
+  main.c
+D:\Travails\IA\TSCP_TD2\Code\main.c(29,54): warning C4244: 'return' : conversion de 'time_t' en 'int', perte possible de données
+  search.c
+  Génération de code en cours
+  Previous IPDB not found, fall back to full compilation.
+  All 58 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Fin de la génération du code
+  TD2.vcxproj -> D:\Travails\IA\TSCP_TD2\TD2\x64\Release\TD2.exe
