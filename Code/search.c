@@ -55,12 +55,12 @@ void think(int output)
 	memset(pv, 0, sizeof(pv));
 	memset(history, 0, sizeof(history));
 	if (output == 1)
-		printf("ply      nodes  score  pv\n");
+		printf("ply      nodes  score time  pv\n");
 	for (i = 1; i <= max_depth; ++i) {
 		follow_pv = TRUE;
 		x = search(-10000, 10000, i);
 		if (output == 1)
-			printf("%3d  %9d  %5d ", i, nodes, x);
+			printf("%3d  %9d %5d  %5d", i, nodes, x, get_ms() - start_time);
 		else if (output == 2)
 			printf("%d %d %d %d",
 					i, x, (get_ms() - start_time) / 10, nodes);
@@ -102,6 +102,45 @@ int search(int alpha, int beta, int depth)
 	if (ply && reps())
 		return 0;
 
+#ifdef TRANSP
+	HtTyp* pTransp = getTT(hash);
+	if (pTransp)
+	{
+		int pTranspEval = pTransp->score;
+		UNSCALE_MATE_VALUE(pTranspEval);
+		if (pTransp->depth >= depth)
+		{
+			if (pTransp->flag & FLAG_VALID)
+			{
+				pv_length[ply] = ply;
+				//pv[ply][ply] = pTransp->move;
+				return pTranspEval;
+			}
+			else
+				if (pTransp->flag & FLAG_L_BOUND)
+				{
+					if (alpha < pTranspEval)
+						alpha = pTranspEval;
+				}
+				else
+					if (pTransp->flag & FLAG_U_BOUND)
+					{
+						if (beta > pTranspEval)
+						{
+							beta = pTranspEval;
+							//canUseNullMove = FALSE;
+						}
+					}
+			if (alpha >= beta)
+			{
+				pv_length[ply] = ply;
+				//pv[ply][ply] = pTransp->move;
+				return alpha;
+			}
+		}
+	}
+#endif TRANSP
+
 	/* are we too deep? */
 	if (ply >= MAX_PLY - 1)
 		return eval();
@@ -126,7 +165,9 @@ int search(int alpha, int beta, int depth)
 		x = -search(-beta, -alpha, depth - 1);
 		takeback();
 		if (x > alpha) {
-
+#ifdef TRANSP
+			if (!stop_search) putTT(hash, depth, x, alpha, beta);
+#endif
 			/* this move caused a cutoff, so increase the history
 			   value so it gets ordered high next time we can
 			   search it */
@@ -182,6 +223,40 @@ int quiesce(int alpha,int beta)
 		return eval();
 	if (hply >= HIST_STACK - 1)
 		return eval();
+
+#ifdef TRANSP
+	HtTyp* pTransp = getTT(hash);
+	if (pTransp)
+	{
+		int pTranspEval = pTransp->score;
+		UNSCALE_MATE_VALUE(pTranspEval);
+		if (pTransp->flag & FLAG_VALID)
+		{
+			pv_length[ply] = ply;
+			return pTranspEval;
+		}
+		else
+			if (pTransp->flag & FLAG_L_BOUND)
+			{
+				if (alpha < pTranspEval)
+					alpha = pTranspEval;
+			}
+			else
+				if (pTransp->flag & FLAG_U_BOUND)
+				{
+					if (beta > pTranspEval)
+					{
+						beta = pTranspEval;
+						//canUseNullMove = FALSE;
+					}
+				}
+		if (alpha >= beta)
+		{
+			pv_length[ply] = ply;
+			return alpha;
+		}
+	}
+#endif
 
 	/* check with the evaluation function */
 	x = eval();

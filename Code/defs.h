@@ -50,6 +50,11 @@
 #define PIECE_DEAD (-1) //permet d'indiquer une pièce morte 
 #define U64 unsigned long long //exercice bonus
 
+#define MAX_TT (500000)
+#define FLAG_L_BOUND	(1)
+#define FLAG_U_BOUND	(2)
+#define FLAG_VALID		(4)
+
 /* This is the basic description of a move. promote is what
    piece to promote the pawn to, if the move is a pawn
    promotion. bits is a bitfield that describes the move,
@@ -96,3 +101,27 @@ typedef struct {
 	unsigned int hash;
 } hist_t;
 
+typedef struct
+{
+	unsigned int hash;		// hash servant à vérifier la validité
+							// de l’entrée
+	short score;
+	unsigned char flag;		// indique si le score est FLAG_EXACT,
+							// FLAG_LOW_BOUND ou FLAG_UPPER_BOUND
+	unsigned char depth;	// Profondeur de reherche
+} HtTyp;
+
+#define SCALE_MATE_VALUE(value) \
+{\
+	if (value > 10000-MAX_PLY) \
+		{value += (ply);};\
+	if (value < -10000+MAX_PLY) \
+		{value -= (ply);};\
+}
+#define UNSCALE_MATE_VALUE(value) \
+{\
+	if (value > 10000-MAX_PLY) \
+		value -= (ply);\
+	if (value < -10000+MAX_PLY) \
+		value += (ply);\
+}

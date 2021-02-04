@@ -31,11 +31,11 @@ void init_board()
 	hply = 0;
 	set_hash();  /* init_hash() must be called before this function */
 	first_move[0] = 0;
+	memset(transposition, 0, sizeof(transposition));
 #ifdef BOARD
 		syncBoard();
 		assert(checkBoard());
 #endif 
-
 }
 
 /*
@@ -195,13 +195,13 @@ void init_hash()
    we have good coverage of all 32 bits. (rand() returns 16-bit numbers
    on some systems.) */
 
-int hash_rand()
+unsigned int hash_rand()
 {
 	int i;
 	int r = 0;
 
 	for (i = 0; i < 32; ++i)
-		r ^= rand() << i;
+		r ^= (unsigned int)(rand() << i);
 	return r;
 }
 
@@ -814,3 +814,49 @@ void takeback()
 		}
 	}
 }
+
+#ifdef TRANSP
+void putTT(unsigned int hash, int depth, int eval, int alpha, int beta)
+{
+	HtTyp* pTransp = &transposition[hash % MAX_TT];
+
+	if (pTransp->depth <= depth)
+	{
+		pTransp->hash = hash;
+		pTransp->depth = depth;
+
+		if (eval <= alpha)
+		{
+			pTransp->flag = FLAG_L_BOUND;
+			SCALE_MATE_VALUE(eval);
+			pTransp->score = eval;
+		}
+		else
+		{
+			if (eval >= beta)
+			{
+				pTransp->flag = FLAG_L_BOUND;
+				SCALE_MATE_VALUE(eval);
+				pTransp->score = eval;
+			}
+			else
+			{
+				SCALE_MATE_VALUE(eval);
+				pTransp->score = eval;
+				pTransp->flag = FLAG_VALID;
+			}
+		}
+	}
+}
+
+
+HtTyp* getTT(unsigned int hash)
+{
+	HtTyp* pTransp = &transposition[hash % MAX_TT];
+
+	if (pTransp->hash == hash)
+		return pTransp;
+
+	return NULL;
+}
+#endif

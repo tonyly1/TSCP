@@ -10,6 +10,7 @@
 
 
 /* the board representation */
+HtTyp transposition[MAX_TT];
 int pospiece[33]; // position de chaque pièce dans board
 int board[64]; // va représenter notre board
 char canAttack[6][64][64]; // table prégénéré de chaque type de pièce en fonction de la source
@@ -64,9 +65,9 @@ int pv_length[MAX_PLY];
 BOOL follow_pv;
 
 /* random numbers used to compute hash; see set_hash() in board.c */
-int hash_piece[2][6][64];  /* indexed by piece [color][type][square] */
-int hash_side;
-int hash_ep[64];
+unsigned int hash_piece[2][6][64];  /* indexed by piece [color][type][square] */
+unsigned int hash_side;
+unsigned int hash_ep[64];
 
 /* Now we have the mailbox array, so called because it looks like a
    mailbox, at least according to Bob Hyatt. This is useful when we

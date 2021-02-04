@@ -28,6 +28,11 @@ void takeback();
 void syncBoard();
 BOOL checkBoard();
 #endif
+#ifndef TRANSP
+//#define TRANSP
+void putTT(unsigned int hash, int depth, int eval, int alpha, int beta);
+HtTyp* getTT(unsigned int hash);
+#endif
 
 /* book.c */
 void open_book();

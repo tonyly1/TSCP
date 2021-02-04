@@ -1,3 +1,2 @@
-﻿  board.c
-D:\Travails\IA\TSCP_TD2\Code\board.c(70,8): warning C4013: 'memset' non défini(e) ; extern retournant int pris par défaut
+﻿  search.c
   TD2.vcxproj -> D:\Travails\IA\TSCP_TD2\TD2\x64\Debug\TD2.exe
