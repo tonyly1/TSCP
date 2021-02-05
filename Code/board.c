@@ -188,6 +188,8 @@ void init_hash()
 	hash_side = hash_rand();
 	for (i = 0; i < 64; ++i)
 		hash_ep[i] = hash_rand();
+	for (i = 0; i < 16; ++i)
+		hash_castle[i] = hash_rand();
 }
 
 
@@ -228,25 +230,27 @@ void set_hash()
 			hash ^= hash_piece[color[i]][piece[i]][i];
 	if (side == DARK)
 		hash ^= hash_side;
+	hash ^= hash_castle[castle];
 	if (ep != -1)
 		hash ^= hash_ep[ep];
 }
 
-// return the final key from hash
+// return the final hash from hash
 unsigned int get_hash()
 {
 	int i;
-	unsigned int final_key;
+	unsigned int final_hash;
 
-	final_key = 0;
+	final_hash = 0;
 	for (i = 0; i < 64; ++i)
 		if (color[i] != EMPTY)
-			final_key ^= hash_piece[color[i]][piece[i]][i];
+			final_hash ^= hash_piece[color[i]][piece[i]][i];
 	if (side == DARK)
-		final_key ^= hash_side;
+		final_hash ^= hash_side;
+	final_hash ^= hash_castle[castle];
 	if (ep != -1)
-		final_key ^= hash_ep[ep];
-	return final_key;
+		final_hash ^= hash_ep[ep];
+	return final_hash;
 }
 
 
@@ -563,6 +567,7 @@ BOOL makemove(move_bytes m)
 		if (in_check(side))
 			return FALSE;
 		switch (m.to) {
+			// white castles king side
 			case 62:
 				if (color[F1] != EMPTY || color[G1] != EMPTY ||
 						attack(F1, xside) || attack(G1, xside))
@@ -570,6 +575,8 @@ BOOL makemove(move_bytes m)
 				from = H1;
 				to = F1;
 				break;
+
+			// white castles queen side
 			case 58:
 				if (color[B1] != EMPTY || color[C1] != EMPTY || color[D1] != EMPTY ||
 						attack(C1, xside) || attack(D1, xside))
@@ -577,6 +584,8 @@ BOOL makemove(move_bytes m)
 				from = A1;
 				to = D1;
 				break;
+
+			// black castles king side
 			case 6:
 				if (color[F8] != EMPTY || color[G8] != EMPTY ||
 						attack(F8, xside) || attack(G8, xside))
@@ -584,6 +593,8 @@ BOOL makemove(move_bytes m)
 				from = H8;
 				to = F8;
 				break;
+			
+			// black castles queen side
 			case 2:
 				if (color[B8] != EMPTY || color[C8] != EMPTY || color[D8] != EMPTY ||
 						attack(C8, xside) || attack(D8, xside))
@@ -597,7 +608,7 @@ BOOL makemove(move_bytes m)
 				break;
 		}
 		// Déplacer la tour
-		// hash castling
+		// hash rook
 		hash ^= hash_piece[side][ROOK][from] ^ hash_piece[side][ROOK][to];
 
 		color[to] = color[from];
@@ -627,7 +638,12 @@ BOOL makemove(move_bytes m)
 	if (ep != -1) hash ^= hash_ep[ep];
 	/* update the castle, en passant, and
 	   fifty-move-draw variables */
+	// hash castling
+	hash ^= hash_castle[castle];
+	// update castling rights
 	castle &= castle_mask[(int)m.from] & castle_mask[(int)m.to];
+	// hash castling
+	hash ^= hash_castle[castle];
 	if (m.bits & 8) {
 		if (side == LIGHT)
 			ep = m.to + 8;

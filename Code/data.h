@@ -37,6 +37,7 @@ extern BOOL follow_pv;
 extern int hash_piece[2][6][64];
 extern unsigned int hash_side;
 extern unsigned int hash_ep[64];
+extern unsigned int hash_castle[16];
 extern unsigned int mailbox[120];
 extern int mailbox64[64];
 extern BOOL slide[6];

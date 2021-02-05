@@ -68,6 +68,18 @@ BOOL follow_pv;
 unsigned int hash_piece[2][6][64];  /* indexed by piece [color][type][square] */
 unsigned int hash_side;
 unsigned int hash_ep[64];
+unsigned int hash_castle[16];
+/* Valeur pour le hash_castle :
+ * 0001 pour un petit roque du roi blanc (kingside) 
+ * 0010 pour un grand roque du roi blanc (queenside)
+ * 0100 pour un petit roque du roi noir (kingside)
+ * 1000 pour un grand roque du roi noir (queenside)
+ * Si on a 0101, cela signifie un petit roque des 2 côtés;
+ * Si on a 1010, cela signifie un grand roque des 2 côtés;
+ * Si on a 1001, cela signifie un grand roque du roi noir et un petit roque du roi blanc;
+ * Si on a 0110, cela signifie un petit roque du roi noir et un grand roque du roi blanc;
+ * Si on a 1111, cela signifie un petit roque et un grand roque des 2 côtés
+ */
 
 /* Now we have the mailbox array, so called because it looks like a
    mailbox, at least according to Bob Hyatt. This is useful when we
