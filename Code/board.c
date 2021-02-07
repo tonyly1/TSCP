@@ -615,6 +615,8 @@ BOOL makemove(move_bytes m)
 		piece[to] = piece[from];
 		color[from] = EMPTY;
 		piece[from] = EMPTY;
+		// comparaison des hash
+		assert(get_hash() == hash);
 #ifdef BOARD
 		board[to] = board[from];
 		pospiece[board[from]] = to;
@@ -634,8 +636,6 @@ BOOL makemove(move_bytes m)
 	++ply;
 	++hply;
 
-	// remove enpassant index from hash if available
-	if (ep != -1) hash ^= hash_ep[ep];
 	/* update the castle, en passant, and
 	   fifty-move-draw variables */
 	// hash castling
@@ -644,6 +644,11 @@ BOOL makemove(move_bytes m)
 	castle &= castle_mask[(int)m.from] & castle_mask[(int)m.to];
 	// hash castling
 	hash ^= hash_castle[castle];
+	// comparaison des hash
+	assert(get_hash() == hash);
+
+	// remove enpassant index from hash if available
+	if (ep != -1) hash ^= hash_ep[ep];
 	if (m.bits & 8) {
 		if (side == LIGHT)
 			ep = m.to + 8;
@@ -658,6 +663,8 @@ BOOL makemove(move_bytes m)
 		fifty = 0;
 	else
 		++fifty;
+	// comparaison des hash
+	assert(get_hash() == hash);
 
 	/* move the piece */
 	// remove hash piece index from hash if no empty
@@ -674,6 +681,9 @@ BOOL makemove(move_bytes m)
 
 	color[(int)m.from] = EMPTY;
 	piece[(int)m.from] = EMPTY;
+
+	// comparaison des hash
+	assert(get_hash() == hash);
 	
 #ifdef BOARD
 	if (board[(int)m.to]) 
@@ -692,6 +702,10 @@ BOOL makemove(move_bytes m)
 
 			color[m.to + 8] = EMPTY;
 			piece[m.to + 8] = EMPTY;
+
+			// comparaison des hash
+			assert(get_hash() == hash);
+
 #ifdef BOARD
 			hist_dat[hply - 1].capturePiece = board[m.to + 8];
 			pospiece[board[m.to + 8]] = PIECE_DEAD;
@@ -705,6 +719,10 @@ BOOL makemove(move_bytes m)
 
 			color[m.to - 8] = EMPTY;
 			piece[m.to - 8] = EMPTY;
+
+			// comparaison des hash
+			assert(get_hash() == hash);
+
 #ifdef BOARD
 			hist_dat[hply - 1].capturePiece = board[m.to - 8];
 			pospiece[board[m.to - 8]] = PIECE_DEAD;
@@ -721,6 +739,8 @@ BOOL makemove(move_bytes m)
 	xside ^= 1;
 	// hash side
 	hash ^= hash_side;
+	// comparaison des hash
+	assert(get_hash() == hash);
 	if (in_check(xside)) {
 		takeback();
 		return FALSE;
